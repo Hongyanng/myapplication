@@ -42,11 +42,7 @@ public abstract class HistoryDataFragment extends Fragment {
 
     }
 
-    protected void setupLineChart(List<History> histories) {
-
-    }
-
-    protected void setupPieChart(List<History> histories) {
+    protected void setupPieChart(Map<String, Integer> typeToVolume) {
 
     }
 
