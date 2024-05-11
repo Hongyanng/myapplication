@@ -39,11 +39,15 @@ public abstract class HistoryDataFragment extends Fragment {
 
 
     protected void setupBarChart(List<History> histories) {
-
+        // 处理数据并设置柱状图
     }
 
-    protected void setupPieChart(Map<String, Integer> typeToVolume) {
+    protected void setupPieChart(List<History> histories) {
+        // 处理数据并设置饼图
+    }
 
+    protected void setupLineChart(List<History> histories) {
+        // 处理数据并设置折线图
     }
 
 

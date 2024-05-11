@@ -46,17 +46,8 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
 public class WeeklyFragment extends HistoryDataFragment {
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        loadDrinkData();
-        return view;
-    }
-
-    @Override
-    protected void loadDrinkData() {
+    protected  void loadDrinkData() {
         String currentUsername = SPUtils.get(getContext(), "username", "").toString();
         if (currentUsername.isEmpty()) {
             Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
@@ -72,9 +63,8 @@ public class WeeklyFragment extends HistoryDataFragment {
             public void done(List<History> histories, BmobException e) {
                 if (e == null) {
                     setupBarChart(histories);
-                    setupLineChart(histories);
                 } else {
-                    Toast.makeText(getContext(), "查询失败:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "查询失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -103,6 +93,8 @@ public class WeeklyFragment extends HistoryDataFragment {
     }
 
     protected  void setupBarChart(List<History> histories) {
+        // 处理数据并设置柱状图
+
         // 存储每种饮品类型（String）和相应的饮用量总和（Integer）
         Map<String, Integer> typeToVolume = new HashMap<>();
         // 用于表示图表中的一个条目（在这里是柱状图的某一根柱子）
@@ -111,101 +103,199 @@ public class WeeklyFragment extends HistoryDataFragment {
         List<String> labels = new ArrayList<>();
 
         int index = 0;
-        for (History history : histories) {
-            String type = history.getType();
-            int currentVolume = typeToVolume.getOrDefault(type, 0);
-            typeToVolume.put(type, currentVolume + history.getDrink());
+        if (histories != null && !histories.isEmpty()) {
+            for (History history : histories) {
+                String type = history.getType();
+                int currentVolume = typeToVolume.getOrDefault(type, 0);
+                typeToVolume.put(type, currentVolume + history.getDrink());
+            }
+
+            for (Map.Entry<String, Integer> entry : typeToVolume.entrySet()) {
+                entries.add(new BarEntry(index, entry.getValue()));
+                labels.add(entry.getKey());
+                index++;
+            }
+
+            // 绘制柱状图
+            BarDataSet dataSet = new BarDataSet(entries, "");
+            dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            BarData data = new BarData(dataSet);
+            chart.setData(data);
+            chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+            chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chart.getXAxis().setDrawGridLines(false);
+            chart.getXAxis().setGranularity(1f);
+            chart.getXAxis().setGranularityEnabled(true);
+            chart.getDescription().setEnabled(false);
+            chart.animateY(1000);
+            chart.invalidate(); // 刷新图表
+
+            // 获取图表的Legend对象
+            Legend legend = chart.getLegend();
+
+            // 设置图例的位置为右上角
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+            legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+
+            // 可以设置图例的形状、大小和颜色等
+            legend.setForm(Legend.LegendForm.SQUARE); // 设置图例的形状为方形
+            legend.setFormSize(10f); // 设置图例图形的大小
+            legend.setTextSize(12f); // 设置图例文字的大小
+
+            // 设置图例的样式和间距等
+            legend.setXEntrySpace(5f); // 设置图例项之间的X轴间距
+            legend.setYEntrySpace(5f); // 设置图例项之间的Y轴间距
+
+            // 刷新图表
+            chart.invalidate(); // 重新绘制图表以应用更改
+
+        } else {
+            Toast.makeText(getContext(), "暂无数据", Toast.LENGTH_LONG).show();
         }
 
-        for (Map.Entry<String, Integer> entry : typeToVolume.entrySet()) {
-            entries.add(new BarEntry(index, entry.getValue()));
-            labels.add(entry.getKey());
-            index++;
-        }
-
-        setupPieChart(typeToVolume);
-
-
-
-        // 绘制柱状图
-        BarDataSet dataSet = new BarDataSet(entries, "");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        BarData data = new BarData(dataSet);
-        chart.setData(data);
-        chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
-        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        chart.getXAxis().setDrawGridLines(false);
-        chart.getXAxis().setGranularity(1f);
-        chart.getXAxis().setGranularityEnabled(true);
-        chart.getDescription().setEnabled(false);
-        chart.animateY(1000);
-        chart.invalidate(); // 刷新图表
-
-        // 获取图表的Legend对象
-        Legend legend = chart.getLegend();
-
-        // 设置图例的位置为右上角
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-
-        // 可以设置图例的形状、大小和颜色等
-        legend.setForm(Legend.LegendForm.SQUARE); // 设置图例的形状为方形
-        legend.setFormSize(10f); // 设置图例图形的大小
-        legend.setTextSize(12f); // 设置图例文字的大小
-
-        // 设置图例的样式和间距等
-        legend.setXEntrySpace(5f); // 设置图例项之间的X轴间距
-        legend.setYEntrySpace(5f); // 设置图例项之间的Y轴间距
-
-        // 刷新图表
-        chart.invalidate(); // 重新绘制图表以应用更改
 
     }
+
 
 
     protected void setupLineChart(List<History> histories) {
+        if (histories != null && !histories.isEmpty()) {
+            // 创建折线图的数据集
+            LineDataSet dataSet = new LineDataSet(generateLineEntries(histories), "一周内的饮用量趋势");
+            dataSet.setColor(Color.BLUE);
+            dataSet.setCircleColor(Color.BLUE);
+            dataSet.setLineWidth(2f);
+            dataSet.setCircleRadius(4f);
 
+            // 设置折线图的其他属性
+            LineData lineData = new LineData(dataSet);
+            lineChart.setData(lineData);
+            lineChart.getDescription().setEnabled(false);
+
+            // 配置 X 轴
+            XAxis xAxis = lineChart.getXAxis();
+            xAxis.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    // 将值转换为日期
+                    int intValue = (int) value;
+                    if (intValue >= 0 && intValue < histories.size()) {
+                        return formatDate(histories.get(intValue).getCreatedAt());
+                    }
+                    return "";
+                }
+            });
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setDrawGridLines(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+
+            // 配置 Y 轴
+            YAxis yAxis = lineChart.getAxisLeft();
+            yAxis.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return String.valueOf((int) value);
+                }
+            });
+
+            lineChart.animateX(1000);
+            lineChart.invalidate();
+        } else {
+            Toast.makeText(getContext(), "暂无数据", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 辅助方法：生成折线图的数据集
+    private List<Entry> generateLineEntries(List<History> histories) {
+        // 存储每天的饮用量总和
+        Map<String, Integer> dateToTotalDrink = new TreeMap<>(); // 使用 TreeMap 以确保日期按顺序排列
+        // 遍历历史记录，计算每天的饮用量总和
+        for (History history : histories) {
+            String date = history.getCreatedAt().split(" ")[0]; // 提取日期部分，形如"2024-05-11"
+            int drink = history.getDrink();
+            int currentTotalDrink = dateToTotalDrink.getOrDefault(date, 0);
+            dateToTotalDrink.put(date, currentTotalDrink + drink);
+        }
+        // 将日期和对应的总饮用量转换为折线图的数据项
+        List<Entry> entries = new ArrayList<>();
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : dateToTotalDrink.entrySet()) {
+            entries.add(new Entry(index, entry.getValue()));
+            index++;
+        }
+        return entries;
+    }
+
+    // 辅助方法：格式化日期
+    private String formatDate(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = sdf.parse(dateString);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            // 格式化为 mm 月 dd 日
+            return String.format("%d 月 %d 日", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
 
 
 
-    protected  void setupPieChart(Map<String, Integer> typeToVolume) {
-        List<PieEntry> entries = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : typeToVolume.entrySet()) {
-            entries.add(new PieEntry(entry.getValue(), entry.getKey()));
-        }
+    protected void setupPieChart(List<History> histories) {
+        // 存储每种饮品类型（String）和相应的饮用量总和（Integer）
+        Map<String, Integer> typeToVolume = new HashMap<>();
 
-        PieDataSet dataSet = new PieDataSet(entries, " ");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);  // 设置扇形块的颜色
-        dataSet.setSliceSpace(3f);                         // 设置扇形块之间的间隙
-        dataSet.setSelectionShift(5f);                     // 设置选中扇形块时的偏移量
+        if (histories != null && !histories.isEmpty()) {
+            // 计算每种饮品的总饮用量
+            for (History history : histories) {
+                String type = history.getType();
+                int currentVolume = typeToVolume.getOrDefault(type, 0);
+                typeToVolume.put(type, currentVolume + history.getDrink());
+            }
 
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter(pieChart));  // 使用百分比显示
-        data.setValueTextSize(11f);                       // 设置数据文本大小
-        data.setValueTextColor(Color.WHITE);              // 设置数据文本颜色
+            // 创建饼图的数据项列表
+            List<PieEntry> entries = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : typeToVolume.entrySet()) {
+                entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+            }
 
-        pieChart.setData(data);
-        pieChart.setUsePercentValues(true);               // 设置为显示百分比
-        pieChart.setEntryLabelTextSize(12f);              // 设置标签文本大小
-        pieChart.setEntryLabelColor(Color.BLACK);         // 设置标签文本颜色
-        pieChart.setCenterText("饮品占比");               // 设置中心文本
-        pieChart.setCenterTextSize(16f);                  // 设置中心文本大小
-        pieChart.getDescription().setEnabled(false);      // 不显示描述文本
-        pieChart.animateY(1400, Easing.EaseInOutQuad);    // 设置动画
+            PieDataSet dataSet = new PieDataSet(entries, " ");
+            dataSet.setColors(ColorTemplate.MATERIAL_COLORS);  // 设置扇形块的颜色
+            dataSet.setSliceSpace(3f);                         // 设置扇形块之间的间隙
+            dataSet.setSelectionShift(5f);                     // 设置选中扇形块时的偏移量
 
+            PieData data = new PieData(dataSet);
+            data.setValueFormatter(new PercentFormatter(pieChart));  // 使用百分比显示
+            data.setValueTextSize(11f);                       // 设置数据文本大小
+            data.setValueTextColor(Color.WHITE);              // 设置数据文本颜色
 
-        // 配置图例
-        Legend legend = pieChart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);   // 设置垂直对齐为顶部
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // 设置水平对齐为右侧
+            pieChart.setData(data);
+            pieChart.setUsePercentValues(true);               // 设置为显示百分比
+            pieChart.setEntryLabelTextSize(12f);              // 设置标签文本大小
+            pieChart.setEntryLabelColor(Color.BLACK);         // 设置标签文本颜色
+            pieChart.setCenterText("饮品占比");               // 设置中心文本
+            pieChart.setCenterTextSize(16f);                  // 设置中心文本大小
+            pieChart.getDescription().setEnabled(false);      // 不显示描述文本
+            pieChart.animateY(1400, Easing.EaseInOutQuad);    // 设置动画
+
+            // 配置图例
+            Legend legend = pieChart.getLegend();
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);   // 设置垂直对齐为顶部
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // 设置水平对齐为右侧
 //        legend.setOrientation(Legend.LegendOrientation.VERTICAL);          // 设置图例的方向为垂直
-        legend.setDrawInside(false);                                       // 设置绘制在外部
-        legend.setEnabled(true);                                           // 启用图例
+            legend.setDrawInside(false);                                       // 设置绘制在外部
+            legend.setEnabled(true);                                           // 启用图例
 
-        pieChart.invalidate(); // 刷新图表
+            // 刷新图表
+            pieChart.invalidate();
+        } else {
+            Toast.makeText(getContext(), "暂无数据", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
