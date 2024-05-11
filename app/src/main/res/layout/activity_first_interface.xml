@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".activity.Main_Activity">
+
+    <!--//列表-->
+    <FrameLayout
+        android:id="@+id/conner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </FrameLayout>
+
+    <!--//导航栏-->
+    <LinearLayout
+        android:id="@+id/navigation"
+        android:background="#04A1D1"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_gravity="bottom"
+        android:padding="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <!--    喝水记录    -->
+        <LinearLayout
+            android:id="@+id/history_layout"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/book_image"
+                android:layout_width="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/history"
+                android:layout_height="30dp"/>
+
+            <TextView
+                android:id="@+id/book_txt"
+                android:layout_width="wrap_content"
+                android:text="喝水记录"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <!--    首页    -->
+        <LinearLayout
+            android:id="@+id/home_layout"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/home_image"
+                android:layout_width="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/cup"
+                android:layout_height="30dp"/>
+
+            <TextView
+                android:id="@+id/home_txt"
+                android:layout_width="wrap_content"
+                android:text="首页"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <!--     我的   -->
+        <LinearLayout
+            android:id="@+id/wo_layout"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/wo_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/wo"/>
+
+            <TextView
+                android:id="@+id/wo_txt"
+                android:layout_width="wrap_content"
+                android:text="我的"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

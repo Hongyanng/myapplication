@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/fm"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:padding="80dp"
+            android:text="注册"
+            android:textColor="@color/white"
+            android:textSize="50dp"
+            >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/phone">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Register_Phone"
+            android:hint="请输入手机号码"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/password">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Register_Password"
+            android:hint="请输入密码"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/message">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Register_SMS"
+            android:hint="请输入验证码"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            >
+        </EditText>
+
+        <ImageView
+            android:id="@+id/Register_Paint"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:textSize="20dp"
+            android:layout_height="50dp"
+            android:background="@color/white">
+        </ImageView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/Register"
+        android:layout_marginTop="10dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:background="@mipmap/queren">
+    </TextView>
+
+    <TextView
+        android:id="@+id/Login_Back"
+        android:paddingRight="20dp"
+        android:gravity="end"
+        android:text="已有账号？去登录"
+        android:textColor="#ECEFF1"
+        android:textSize="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
+</LinearLayout>

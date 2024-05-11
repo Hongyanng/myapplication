@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="#ffffff"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#04A1D1"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
+
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:background="#04A1D1"-->
+<!--        android:padding="5dp"-->
+<!--        android:layout_height="wrap_content">-->
+
+
+<!--        <TextView-->
+<!--            android:textColor="@color/white"-->
+<!--            android:text="今日喝水记录"-->
+<!--            android:textSize="25sp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content">-->
+<!--        </TextView>-->
+
+<!--    </RelativeLayout>-->
+
+
+<!--    <com.github.mikephil.charting.charts.BarChart-->
+<!--        android:id="@+id/chart"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="250dp" />-->
+
+
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:background="#04A1D1"-->
+<!--        android:padding="5dp"-->
+<!--        android:layout_marginTop="35dp"-->
+<!--        android:layout_height="wrap_content">-->
+
+
+<!--        <TextView-->
+<!--            android:textColor="@color/white"-->
+<!--            android:text="今日饮品占比"-->
+<!--            android:textSize="25sp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content">-->
+<!--        </TextView>-->
+
+<!--    </RelativeLayout>-->
+
+<!--    <com.github.mikephil.charting.charts.PieChart-->
+<!--        android:id="@+id/pieChart"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="250dp"-->
+<!--        android:layout_marginTop="20dp"/>-->
+
+
+
+</LinearLayout>

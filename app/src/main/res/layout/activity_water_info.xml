@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="#04A1D1"
+        android:padding="5dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/back"
+            android:src="@mipmap/back_white"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </ImageView>
+
+        <TextView
+            android:text="含水量"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </TextView>
+
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/t1"
+                    android:text="水分"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/t2"
+                    android:layout_below="@id/t1"
+                    android:textSize="15sp"
+                    android:text="各种饮料的含水量均不同，我们会按照不同饮品的含水量归入到总摄入量中。"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:layout_below="@id/t2"
+                    android:textSize="15sp"
+                    android:text="例如：摄入100ml的可乐，实际饮水量为85ml"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <RelativeLayout
+                    android:id="@+id/l1"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  水"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="100%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/l2"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  茶"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="98%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l3"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  汤"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="95%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l4"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  牛奶"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="88%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l5"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  咖啡"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="90%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l6"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  果汁"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="86%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l7"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  酸奶"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="70%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l8"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  奶茶"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="80%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l9"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  运动饮料"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="85%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/l10"
+                    android:background="@drawable/gery_bg"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="  碳酸饮料"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="86%"
+                        android:padding="10dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/t3"
+                    android:text="酒精"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/t4"
+                    android:layout_below="@id/t3"
+                    android:textSize="15sp"
+                    android:text="喝酒后需要及时补充水分，所以摄入酒精会增加您的每日目标。"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:layout_below="@id/t4"
+                    android:textSize="15sp"
+                    android:text="例如：摄入100ml的啤酒，喝水目标增加60ml"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/l11"
+                android:background="@drawable/gery_bg"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:text="  啤酒"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="+60%"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/fm"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:padding="80dp"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="50dp"
+            >
+        </TextView>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/phone">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Login_Phone"
+            android:hint="请输入手机号码"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/password">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Login_Password"
+            android:hint="请输入密码"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/remember_password_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:button="@null"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:checked="false"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="记住密码"
+            android:textSize="25sp"
+            android:textColor="@color/white"
+            android:layout_gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/Login"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:background="@mipmap/queren"
+        android:layout_width="80dp"
+        android:layout_height="80dp">
+    </TextView>
+
+
+
+    <RelativeLayout
+        android:paddingHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/Login_Lose"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="忘记密码?"
+            android:textColor="#ECEFF1"
+            android:textSize="25dp"
+            >
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/Login_Resgister"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="注册账号"
+            android:textColor="#ECEFF1"
+            android:textSize="25dp"
+            >
+        </TextView>
+    </RelativeLayout>
+</LinearLayout>

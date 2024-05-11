@@ -1,0 +1,187 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="250dp">
+
+    <RelativeLayout
+        android:background="@drawable/num_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableLayout
+            android:id="@+id/dialer_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/water"
+                    android:text="水"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/tea"
+                    android:text="茶"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/soup"
+                    android:text="汤"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/milk"
+                    android:text="牛奶"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/coffee"
+                    android:text="咖啡"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/juice"
+                    android:text="果汁"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/beer"
+                    android:text="啤酒"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/yoghurt"
+                    android:text="酸奶"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/milktea"
+                    android:text="奶茶"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/Sportsdrinks"
+                    android:text="运动饮料"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/Carbonateddrinks"
+                    android:text="碳酸饮料"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/other"
+                    android:text="其他"
+                    android:layout_width="0dp"
+                    android:background="@drawable/item_bg"
+                    android:layout_margin="3dp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+        </TableLayout>
+
+
+    </RelativeLayout>
+
+
+</FrameLayout>
+
+
+
