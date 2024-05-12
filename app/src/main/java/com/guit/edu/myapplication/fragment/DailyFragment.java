@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.guit.edu.myapplication.R;
 import com.guit.edu.myapplication.SPUtils;
 import com.guit.edu.myapplication.entity.History;
 
@@ -46,6 +48,17 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
 public class DailyFragment extends HistoryDataFragment {
+    RelativeLayout linechart_layout;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        linechart_layout = view.findViewById(R.id.linechart_layout);
+        linechart_layout.setVisibility(View.GONE);
+        lineChart.setVisibility(View.GONE);
+        return view;
+    }
+
     protected  void loadDrinkData() {
         String currentUsername = SPUtils.get(getContext(), "username", "").toString();
         if (currentUsername.isEmpty()) {

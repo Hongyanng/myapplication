@@ -48,6 +48,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/linechart_layout"
             android:layout_width="match_parent"
             android:background="#04A1D1"
             android:padding="5dp"
