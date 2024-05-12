@@ -56,9 +56,19 @@
 
 
             <TextView
+                android:id="@+id/hsqx"
                 android:textColor="@color/white"
                 android:text="喝水曲线"
                 android:textSize="25sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:layout_toRightOf="@+id/hsqx"
+                android:textColor="@color/white"
+                android:text="(双指缩放图表)"
+                android:textSize="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>

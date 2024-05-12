@@ -47,13 +47,18 @@ import cn.bmob.v3.listener.FindListener;
 
 public class WeeklyFragment extends HistoryDataFragment {
     @Override
-    protected  void loadDrinkData() {
+    protected void loadDrinkData() {
         String currentUsername = SPUtils.get(getContext(), "username", "").toString();
         if (currentUsername.isEmpty()) {
             Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
             return;
         }
 
+
+        // 打印开始时间
+        Log.d("WeeklyFragment", "开始时间：" + getStartOfWeek().toString());
+        // 打印结束时间
+        Log.d("WeeklyFragment", "结束时间：" + getEndOfWeek().toString());
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
         query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(getStartOfWeek()));
@@ -63,36 +68,36 @@ public class WeeklyFragment extends HistoryDataFragment {
             public void done(List<History> histories, BmobException e) {
                 if (e == null) {
                     setupBarChart(histories);
+                    setupPieChart(histories);
+                    setupLineChart(histories);
                 } else {
-                    Toast.makeText(getContext(), "查询失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "查询失败:" + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-
     protected Date getStartOfWeek() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        calendar.add(Calendar.WEEK_OF_YEAR, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
 
     protected Date getEndOfWeek() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+//        calendar.add(Calendar.WEEK_OF_YEAR, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
         return calendar.getTime();
     }
 
-    protected  void setupBarChart(List<History> histories) {
+    protected void setupBarChart(List<History> histories) {
         // 处理数据并设置柱状图
 
         // 存储每种饮品类型（String）和相应的饮用量总和（Integer）
@@ -127,6 +132,9 @@ public class WeeklyFragment extends HistoryDataFragment {
             chart.getXAxis().setGranularity(1f);
             chart.getXAxis().setGranularityEnabled(true);
             chart.getDescription().setEnabled(false);
+            // 获取右边的 Y 轴对象并隐藏
+            YAxis rightYAxis = chart.getAxisRight();
+            rightYAxis.setEnabled(false);
             chart.animateY(1000);
             chart.invalidate(); // 刷新图表
 
@@ -138,7 +146,7 @@ public class WeeklyFragment extends HistoryDataFragment {
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
 
-            // 可以设置图例的形状、大小和颜色等
+            // 设置图例的形状、大小和颜色等
             legend.setForm(Legend.LegendForm.SQUARE); // 设置图例的形状为方形
             legend.setFormSize(10f); // 设置图例图形的大小
             legend.setTextSize(12f); // 设置图例文字的大小
@@ -161,10 +169,27 @@ public class WeeklyFragment extends HistoryDataFragment {
 
     protected void setupLineChart(List<History> histories) {
         if (histories != null && !histories.isEmpty()) {
+            // 将历史记录按日期进行分组并计算每天的饮用量总和
+            Map<String, Integer> dateToTotalDrink = new HashMap<>();
+            for (History history : histories) {
+                String date = history.getCreatedAt().split(" ")[0]; // 提取日期部分
+                int drink = history.getDrink();
+                int currentTotalDrink = dateToTotalDrink.getOrDefault(date, 0);
+                dateToTotalDrink.put(date, currentTotalDrink + drink);
+            }
+
+            // 生成折线图的数据集
+            List<Entry> entries = new ArrayList<>();
+            int index = 0;
+            for (Map.Entry<String, Integer> entry : dateToTotalDrink.entrySet()) {
+                entries.add(new Entry(index, entry.getValue()));
+                index++;
+            }
+
             // 创建折线图的数据集
-            LineDataSet dataSet = new LineDataSet(generateLineEntries(histories), "一周内的饮用量趋势");
-            dataSet.setColor(Color.BLUE);
-            dataSet.setCircleColor(Color.BLUE);
+            LineDataSet dataSet = new LineDataSet(entries, "一周内的饮用量趋势");
+            dataSet.setColor(Color.GREEN);
+            dataSet.setCircleColor(Color.BLACK);
             dataSet.setLineWidth(2f);
             dataSet.setCircleRadius(4f);
 
@@ -178,10 +203,10 @@ public class WeeklyFragment extends HistoryDataFragment {
             xAxis.setValueFormatter(new ValueFormatter() {
                 @Override
                 public String getFormattedValue(float value) {
-                    // 将值转换为日期
                     int intValue = (int) value;
-                    if (intValue >= 0 && intValue < histories.size()) {
-                        return formatDate(histories.get(intValue).getCreatedAt());
+                    if (intValue >= 0 && intValue < dateToTotalDrink.size()) {
+                        // 返回每天的日期
+                        return formatDate(dateToTotalDrink.keySet().toArray(new String[0])[intValue]);
                     }
                     return "";
                 }
@@ -200,32 +225,31 @@ public class WeeklyFragment extends HistoryDataFragment {
                 }
             });
 
-            lineChart.animateX(1000);
+            // 获取右边的 Y 轴对象并隐藏
+            YAxis rightYAxis = lineChart.getAxisRight();
+            rightYAxis.setEnabled(false);
+
+            lineChart.animateX(2500);
+
+            // 获取图例对象
+            Legend legend = lineChart.getLegend();
+            // 设置图例的位置为右上角
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+            legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+            // 可以设置图例的形状、大小和颜色等
+            legend.setForm(Legend.LegendForm.SQUARE); // 设置图例的形状为方形
+            legend.setFormSize(10f); // 设置图例图形的大小
+            legend.setTextSize(12f); // 设置图例文字的大小
+            // 设置图例的样式和间距等
+            legend.setXEntrySpace(5f); // 设置图例项之间的X轴间距
+            legend.setYEntrySpace(5f); // 设置图例项之间的Y轴间距
+
+            // 刷新图表
             lineChart.invalidate();
         } else {
             Toast.makeText(getContext(), "暂无数据", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // 辅助方法：生成折线图的数据集
-    private List<Entry> generateLineEntries(List<History> histories) {
-        // 存储每天的饮用量总和
-        Map<String, Integer> dateToTotalDrink = new TreeMap<>(); // 使用 TreeMap 以确保日期按顺序排列
-        // 遍历历史记录，计算每天的饮用量总和
-        for (History history : histories) {
-            String date = history.getCreatedAt().split(" ")[0]; // 提取日期部分，形如"2024-05-11"
-            int drink = history.getDrink();
-            int currentTotalDrink = dateToTotalDrink.getOrDefault(date, 0);
-            dateToTotalDrink.put(date, currentTotalDrink + drink);
-        }
-        // 将日期和对应的总饮用量转换为折线图的数据项
-        List<Entry> entries = new ArrayList<>();
-        int index = 0;
-        for (Map.Entry<String, Integer> entry : dateToTotalDrink.entrySet()) {
-            entries.add(new Entry(index, entry.getValue()));
-            index++;
-        }
-        return entries;
     }
 
     // 辅助方法：格式化日期
@@ -236,7 +260,7 @@ public class WeeklyFragment extends HistoryDataFragment {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             // 格式化为 mm 月 dd 日
-            return String.format("%d 月 %d 日", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+            return String.format("%d月%d日", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         } catch (ParseException e) {
             e.printStackTrace();
             return "";

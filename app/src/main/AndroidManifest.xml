@@ -14,7 +14,9 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--获取相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <!--推送所需的权限-->
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 
 
@@ -23,9 +25,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
@@ -49,6 +51,49 @@
         <activity android:name=".activity.First_interface_Activity"></activity>
         <activity android:name=".activity.Resgister_Activity"></activity>
         <activity android:name=".activity.Water_Info_Activity"></activity>
+
+
+<!--        <service-->
+<!--            android:label="PushService"-->
+<!--            android:name="cn.bmob.push.lib.service.PushService"-->
+<!--            android:process=":bmobpush"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="cn.bmob.push.lib.service.PushService"/>-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+<!--        &lt;!&ndash; 用于进程保活 &ndash;&gt;-->
+<!--        <service-->
+<!--            android:name="cn.bmob.push.lib.service.PushNotifyService"-->
+<!--            android:process=":bmobpush" >-->
+<!--        </service>-->
+<!--        <receiver android:name="cn.bmob.push.PushReceiver" >-->
+<!--            <intent-filter>-->
+<!--                &lt;!&ndash; 系统启动完成后会调用 &ndash;&gt;-->
+<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+<!--                &lt;!&ndash; 解锁完成后会调用 &ndash;&gt;-->
+<!--                <action android:name="android.intent.action.USER_PRESENT" />-->
+<!--                &lt;!&ndash; 监听网络连通性 &ndash;&gt;-->
+<!--                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+<!--        &lt;!&ndash; 第四部中创建的消息接收器，在这里进行注册 &ndash;&gt;-->
+<!--        <receiver android:name="your.package.MyPushMessageReceiver">-->
+<!--            <intent-filter >-->
+<!--                <action android:name="cn.bmob.push.action.MESSAGE"/>-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+<!--        &lt;!&ndash; 接收心跳和唤醒的广播，要和PushService运行在同个进程 &ndash;&gt;-->
+<!--        <receiver-->
+<!--            android:name="cn.bmob.push.PushNotifyReceiver"-->
+<!--            android:process=":bmobpush" >-->
+<!--            <intent-filter>-->
+<!--                &lt;!&ndash; 接收心跳广播的action &ndash;&gt;-->
+<!--                <action android:name="cn.bmob.push.action.HEARTBEAT" />-->
+<!--                &lt;!&ndash; 接收唤醒广播的action &ndash;&gt;-->
+<!--                <action android:name="cn.bmob.push.action.NOTIFY" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
     </application>
 
