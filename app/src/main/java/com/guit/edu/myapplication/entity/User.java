@@ -13,6 +13,18 @@ public class User extends BmobObject {
     int Weight;  //体重
     int Cupcapacity;  //杯子容量
 
+
+
+    public int calculateAssignment() {
+        // 计算饮水目标量，单位为毫升
+        // 假设公式：每日饮水量（毫升） = 体重（公斤） * 35
+        return Weight * 35;
+    }
+
+    public void setCalculatedAssignment() {
+        this.Assignment = calculateAssignment();
+    }
+
     public String getNickname() {
         return Nickname;
     }

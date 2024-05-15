@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,9 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
     private static final String TAG = null;
     private EditText register_phone;//获取注册的手机号码
     private EditText register_password;//获取注册的密码
+    private EditText registerHeight;//身高
+    private EditText registerWeight;//体重
+    private RadioGroup registerGender;
     private EditText register_sms;//输入验证码
     private TextView register;//注册
     private TextView login_back;//返回登陆
@@ -37,6 +42,10 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
     private String passeword;//客户端输入的密码
     private String sms;//客户端输入的验证码
     private String realCode;//图形验证码
+    String heightStr;
+    String weightStr;
+    String gender;
+    RadioButton selectedGenderRadioButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +63,11 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
         register = findViewById(R.id.Register);
         login_back = findViewById(R.id.Login_Back);
         register_paint = findViewById(R.id.Register_Paint);
+        registerHeight = findViewById(R.id.Register_Height);
+        registerWeight = findViewById(R.id.Register_Weight);
+//        registerGender = findViewById(R.id.Register_Gender);
+//        selectedGenderRadioButton = findViewById(registerGender.getCheckedRadioButtonId());
+
 
         //启动监听机制
         //将验证码用图片的形式显示出来
@@ -69,6 +83,9 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
         phone = register_phone.getText().toString().trim();
         passeword = register_password.getText().toString().trim();
         sms = register_sms.getText().toString().toLowerCase();
+        heightStr = registerHeight.getText().toString().trim();
+        weightStr = registerWeight.getText().toString().trim();
+//        gender = selectedGenderRadioButton.getText().toString();
     }
 
 
@@ -100,7 +117,11 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(getApplicationContext(),"密码不得少于6位数",Toast.LENGTH_SHORT).show();
                 } else if (passeword.length() > 16) {
                     Toast.makeText(getApplicationContext(),"密码不得多于16位数",Toast.LENGTH_SHORT).show();
-                }else {
+                } else if (TextUtils.isEmpty(heightStr)) {
+                    Toast.makeText(getApplicationContext(),"请输入身高",Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(weightStr)) {
+                    Toast.makeText(getApplicationContext(),"请输入体重",Toast.LENGTH_SHORT).show();
+                } else {
                     BmobQuery<User> bmobQuery = new BmobQuery<>();
                     bmobQuery.findObjects(new FindListener<User>() {
                         @Override
@@ -123,13 +144,20 @@ public class Resgister_Activity extends AppCompatActivity implements View.OnClic
                                     if (sms.equals(realCode)) {
                                         Toast.makeText(getApplicationContext(),  "验证码正确", Toast.LENGTH_SHORT).show();
                                         //将用户信息存入bmob云端
+
+                                        int height = Integer.parseInt(heightStr);
+                                        int weight = Integer.parseInt(weightStr);
+                                        // 计算推荐的饮水量，这里可以根据自己的需求定义计算逻辑
+                                        int recommendedWaterIntake = weight * 35;
                                         final User user = new User();
                                         user.setUsername(phone);
                                         user.setPassword(passeword);
-                                        user.setNickname("爱喝水的小熊宝");
-                                        user.setAssignment(0);
-                                        user.setSignature("爱喝水的小熊宝");
+                                        user.setNickname("点这里修改昵称");
+                                        user.setSignature("点这里修改你的个性签名");
                                         user.setGender("男");
+                                        user.setHeight(height);
+                                        user.setWeight(weight);
+                                        user.setAssignment(recommendedWaterIntake);
                                         user.save(new SaveListener<String>() {
                                             @Override
                                             public void done(String s, BmobException e) {

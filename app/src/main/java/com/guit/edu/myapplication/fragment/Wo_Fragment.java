@@ -249,17 +249,24 @@ public class Wo_Fragment extends Fragment {
             lastDate = currentDate;  // 更新上一次的日期
         }
 
+        // 如果没有连续记录，则重新计数
+        if (count == 0) {
+            count = 1;
+        }
+
         return count;
     }
 
     private boolean isSameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
         cal1.setTime(date1);
+        Calendar cal2 = Calendar.getInstance();
         cal2.setTime(date2);
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
+
 
 
 
@@ -574,6 +581,8 @@ public class Wo_Fragment extends Fragment {
                     User currentUser = userList.get(0);
                     // 更新体重字段
                     currentUser.setWeight(newWeight);
+                    int recommendedWaterIntake = newWeight * 35;
+                    currentUser.setAssignment(recommendedWaterIntake);
                     // 保存更新后的用户信息到数据库
                     currentUser.update(new UpdateListener() {
                         @Override
@@ -581,6 +590,7 @@ public class Wo_Fragment extends Fragment {
                             if (e == null) {
                                 // 更新成功，更新体重 TextView 的文本显示
                                 weight.setText(newWeight + "kg");
+                                queryUserData();
                                 Toast.makeText(getContext(), "体重更新成功", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getContext(), "体重更新失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();

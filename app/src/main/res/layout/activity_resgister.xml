@@ -33,8 +33,7 @@
 
         <TextView
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:background="@mipmap/phone">
+            android:layout_height="match_parent">
         </TextView>
 
         <EditText
@@ -58,8 +57,7 @@
 
         <TextView
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:background="@mipmap/password">
+            android:layout_height="match_parent">
         </TextView>
 
         <EditText
@@ -74,6 +72,57 @@
         </EditText>
     </LinearLayout>
 
+    <!-- 输入身高 -->
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Register_Height"
+            android:hint="请输入身高（cm）"
+            android:inputType="number"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </EditText>
+    </LinearLayout>
+
+    <!-- 输入体重 -->
+    <LinearLayout
+        android:paddingHorizontal="15dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent">
+        </TextView>
+
+        <EditText
+            android:id="@+id/Register_Weight"
+            android:hint="请输入体重（kg）"
+            android:inputType="numberDecimal"
+            android:textSize="25dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textColorHint="#B0BEC5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </EditText>
+    </LinearLayout>
+
+
     <LinearLayout
         android:paddingHorizontal="15dp"
         android:paddingTop="20dp"
@@ -84,8 +133,7 @@
         <TextView
             android:layout_weight="0.7"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@mipmap/message">
+            android:layout_height="match_parent">
         </TextView>
 
         <EditText
