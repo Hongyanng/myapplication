@@ -1,5 +1,7 @@
 package com.guit.edu.myapplication.fragment;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +59,7 @@ public class Wo_Fragment extends Fragment {
     private TextView assignment;
     private LinearLayout genderLayout;
     private LinearLayout weightLayout;
+    private LinearLayout heightLayout;
     private LinearLayout cupCapacityLayout;
     private RoundedImageView touxiangImageView;
     private RelativeLayout exit_layout;
@@ -64,8 +68,9 @@ public class Wo_Fragment extends Fragment {
     private RelativeLayout lose_layout;
     private RelativeLayout water_info_layout;
     private TextView achievementTextView;
-
+    private TextView height;
     private List<String> genderItems = new ArrayList<>();
+    private List<String> heightItems = new ArrayList<>();
     private static final int REQUEST_CAMERA = 1;
     private static final int SELECT_FILE = 2;
     private Uri imageUri;
@@ -92,6 +97,8 @@ public class Wo_Fragment extends Fragment {
         assignment_layout = view.findViewById(R.id.assignment_layout);
         water_info_layout = view.findViewById(R.id.water_info_layout);
         achievementTextView = view.findViewById(R.id.achievement);
+        heightLayout = view.findViewById(R.id.height_layout);
+        height = view.findViewById(R.id.height);
 
         // 初始化性别列表
         genderItems.add("男");
@@ -106,6 +113,9 @@ public class Wo_Fragment extends Fragment {
         if (versionName != null) {
             versionTextView.setText(versionName);
         }
+
+        // 初始化身高选项
+
 
         // 修改密码的点击事件
         lose_layout.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +146,13 @@ public class Wo_Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 showGenderPicker();
+            }
+        });
+
+        heightLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showHeightPicker();
             }
         });
 
@@ -191,6 +208,7 @@ public class Wo_Fragment extends Fragment {
     }
 
 
+
     private void updateContinuousDays() {
         String currentUsername = SPUtils.get(getContext(), "username", "").toString();
         if (currentUsername.isEmpty()) {
@@ -204,10 +222,21 @@ public class Wo_Fragment extends Fragment {
         query.findObjects(new FindListener<History>() {
             @Override
             public void done(List<History> histories, BmobException e) {
-                if (e == null && !histories.isEmpty()) {
-                    int days = countContinuousDays(histories);
+                if (e == null) {
+                    int days = 0;
+                    if (!histories.isEmpty()) {
+                        days = countContinuousDays(histories);
+                    }
                     TextView achievementTextView = getView().findViewById(R.id.achievement);
-                    achievementTextView.setText("已连续打卡 " + days + " 天");
+                    if (achievementTextView != null) {
+                        if (days > 0) {
+                            achievementTextView.setText("已连续打卡 " + days + " 天");
+                        } else {
+                            achievementTextView.setText("未打卡");
+                        }
+                    } else {
+                        Log.e(TAG, "Achievement TextView is null");
+                    }
                 } else {
                     Toast.makeText(getContext(), "查询打卡记录失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -320,9 +349,9 @@ public class Wo_Fragment extends Fragment {
             Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
             return;
         }
-        BmobQuery<User> bmobQuery = new BmobQuery<>();
-        bmobQuery.addWhereEqualTo("Username", currentUsername);
-        bmobQuery.findObjects(new FindListener<User>() {
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
+        query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> list, BmobException e) {
                 if (e == null) {
@@ -332,6 +361,7 @@ public class Wo_Fragment extends Fragment {
                         signature.setText(user.getSignature());
                         assignment.setText(user.getAssignment() + "ml");
                         gender.setText(user.getGender());
+                        height.setText(user.getHeight() + "cm");
                         weight.setText(user.getWeight() + "kg");
                         cupcapacity.setText(user.getCupcapacity() + "ml");
                     }
@@ -374,8 +404,13 @@ public class Wo_Fragment extends Fragment {
 
     // 更新昵称到 Bmob 数据库中
     private void updateNickname(final String newNickname) {
-        // 查询当前用户的数据以确保数据最新
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
         BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> userList, BmobException e) {
@@ -436,8 +471,13 @@ public class Wo_Fragment extends Fragment {
 
     // 更新个性签名到 Bmob 数据库中
     private void updateSignature(final String newSignature) {
-        // 查询当前用户的数据以确保数据最新
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
         BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> userList, BmobException e) {
@@ -465,6 +505,86 @@ public class Wo_Fragment extends Fragment {
             }
         });
     }
+
+    // 弹出身高选择器
+    private void showHeightPicker() {
+        // 从 height TextView 中获取当前的身高值
+        String heightStr = height.getText().toString();
+        // 解析身高值为整数
+        int currentHeight = Integer.parseInt(heightStr.replaceAll("[^0-9]", ""));
+
+        // 创建身高选择器
+        OptionsPickerView<Integer> pickerView = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                // 获取选中的身高
+                int selectedHeight = options1 * 5 + 100; // 范围从100到300，每5厘米一个选项
+                // 更新身高到数据库
+                updateHeight(selectedHeight);
+            }
+        })
+                .setTitleText("选择身高")
+                .setContentTextSize(20)
+                .setDividerColor(Color.BLACK)
+                .setSelectOptions((currentHeight - 100) / 5) // 设置默认选中项为当前身高
+                .setBgColor(Color.WHITE)
+                .setTitleBgColor(Color.WHITE)
+                .setTitleColor(Color.BLACK)
+                .setCancelColor(Color.BLACK)
+                .setSubmitColor(Color.BLACK)
+                .setTextColorCenter(Color.BLACK)
+                .build();
+
+        // 设置身高数据，范围从100到300，每5厘米一个选项
+        List<Integer> heightItems = new ArrayList<>();
+        for (int i = 100; i <= 300; i += 5) {
+            heightItems.add(i);
+        }
+        pickerView.setPicker(heightItems);
+
+        // 显示身高选择器
+        pickerView.show();
+    }
+
+    // 更新身高到 Bmob 数据库中
+    private void updateHeight(final int newHeight) {
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
+        query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> userList, BmobException e) {
+                if (e == null && userList != null && userList.size() > 0) {
+                    // 获取当前用户对象
+                    User currentUser = userList.get(0);
+                    // 更新身高字段
+                    currentUser.setHeight(newHeight);
+                    // 保存更新后的用户信息到数据库
+                    currentUser.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                // 更新成功，更新身高 TextView 的文本显示
+                                height.setText(newHeight + "cm");
+                                Toast.makeText(getContext(), "身高更新成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "身高更新失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "查询当前用户信息失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+
 
     // 弹出性别选择器
     private void showGenderPicker() {
@@ -499,8 +619,13 @@ public class Wo_Fragment extends Fragment {
 
     // 更新性别到 Bmob 数据库中
     private void updateGender(final String newGender) {
-        // 查询当前用户的数据以确保数据最新
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
         BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> userList, BmobException e) {
@@ -571,8 +696,13 @@ public class Wo_Fragment extends Fragment {
 
     // 更新体重到 Bmob 数据库中
     private void updateWeight(final int newWeight) {
-        // 查询当前用户的数据以确保数据最新
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
         BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> userList, BmobException e) {
@@ -646,8 +776,13 @@ public class Wo_Fragment extends Fragment {
 
     // 更新杯容量到 Bmob 数据库中
     private void updateCupCapacity(final int newCapacity) {
-        // 查询当前用户的数据以确保数据最新
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
         BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
         query.findObjects(new FindListener<User>() {
             @Override
             public void done(List<User> userList, BmobException e) {

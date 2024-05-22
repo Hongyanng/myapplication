@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/welcome"
             android:textColor="@color/white"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
@@ -23,7 +23,7 @@
         <TextView
             android:id="@+id/nickname"
             android:layout_below="@id/welcome"
-            android:textSize="35sp"
+            android:textSize="20sp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -33,8 +33,68 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/wo_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/encouragement_text"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:text="加油！再喝“1”杯水就完成今日的饮水目标了哦！"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content">
+
+            </TextView>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/wo_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/jrysjl"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:text="今日饮水记录"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content">
+
+            </TextView>
+
+            <TextView
+                android:layout_toRightOf="@+id/jrysjl"
+                android:textColor="@color/white"
+                android:text="(长按删除记录)"
+                android:textSize="15sp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/conn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
 
 
     </LinearLayout>

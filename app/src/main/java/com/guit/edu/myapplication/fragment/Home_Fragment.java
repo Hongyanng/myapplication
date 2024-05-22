@@ -1,9 +1,12 @@
 package com.guit.edu.myapplication.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,13 +23,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.guit.edu.myapplication.Adapter.WaterRecordAdapter;
 import com.guit.edu.myapplication.R;
 import com.guit.edu.myapplication.SPUtils;
 import com.guit.edu.myapplication.activity.First_interface_Activity;
 import com.guit.edu.myapplication.entity.History;
 import com.guit.edu.myapplication.entity.User;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +43,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 public class Home_Fragment extends Fragment implements View.OnClickListener {
     private TextView nickname;
@@ -43,10 +52,17 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
     private LinearLayout drinkLayout;
     private int drinkValue = 0;
     private int assignmentValue = 0;
+    private int cupCapacity;
+    private RecyclerView recyclerView;
+    private WaterRecordAdapter adapter;
+    private List<History> historyList;
     private String currentInput = "";
     private TextView display;
     private TextView timeTextView ;
-    TextView typeTextView;
+    private TextView typeTextView;
+    private TextView encouragementTextView;
+    ImageView cupImage;
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,8 +74,17 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         welcomeTextView = view.findViewById(R.id.welcome);
         drinkLayout = view.findViewById(R.id.drink);
         timeTextView = view.findViewById(R.id.time);
+        encouragementTextView = view.findViewById(R.id.encouragement_text);
 
+        //初始化 RecyclerView
+        recyclerView = view.findViewById(R.id.conn);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
 
+         //初始化历史记录列表和适配器
+        historyList = new ArrayList<>();
+        adapter = new WaterRecordAdapter(historyList);
+        recyclerView.setAdapter(adapter);
 
 
         // 获取当前时间
@@ -91,11 +116,20 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        nickname.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInputDialog();
+            }
+        });
+
         // 查询用户数据并显示在 UI 上
         queryUserData();
         queryDrinkValue();
 
         startCountDown(); // 启动倒计时
+
+
 
         return view;
     }
@@ -119,6 +153,8 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
                         nickname.setText(user.getNickname());
                         // 获取用户设定的饮水目标值
                         assignmentValue = user.getAssignment();
+                        //获取杯子容量
+                        cupCapacity = user.getCupcapacity();
                         // 更新任务剩余饮水量
                         updateTaskTextView();
                     }
@@ -129,6 +165,9 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+
+
 
     // 查询用户今日剩余饮水量
     private void queryDrinkValue() {
@@ -155,6 +194,10 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
                         }
                         drinkValue = totalDrink;
                         updateTaskTextView();
+                        // 查询成功，更新适配器数据集
+                        historyList.clear();
+                        historyList.addAll(object);
+                        adapter.notifyDataSetChanged();
                     } else {
                         // 如果查询结果为空，显示默认值（这里假设默认值为 0）
                         drinkValue = 0;
@@ -198,8 +241,18 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
             taskTextView.setText("剩余"+String.valueOf(remainingDrink)+"ml ");
         }
 
-    }
+        int remainingCups = remainingDrink / cupCapacity;
 
+
+        if (encouragementTextView != null) {
+            if (remainingCups <= 0) {
+                encouragementTextView.setText("今天的饮水目标已经达成！");
+            } else {
+                encouragementTextView.setText("加油！还要再喝" + remainingCups + "杯水！");
+            }
+        }
+
+    }
 
     // 弹出拨号盘的方法
     private void showDialerDialog() {
@@ -447,7 +500,72 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         }.start();
     }
 
+    // 弹出对话框或者输入框让用户输入新的昵称
+    private void showInputDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("请输入新的昵称");
 
+        // 创建一个 EditText 用于用户输入
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // 确认按钮
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String newNickname = input.getText().toString();
+                updateNickname(newNickname); // 更新昵称到数据库
+            }
+        });
+
+        // 取消按钮
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    // 更新昵称到 Bmob 数据库中
+    private void updateNickname(final String newNickname) {
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BmobQuery<User> query = new BmobQuery<>();
+        query.addWhereEqualTo("Username", currentUsername);
+        query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> userList, BmobException e) {
+                if (e == null && userList != null && userList.size() > 0) {
+                    // 获取当前用户对象
+                    User currentUser = userList.get(0);
+                    // 更新昵称字段
+                    currentUser.setNickname(newNickname);
+                    // 保存更新后的用户信息到数据库
+                    currentUser.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                // 更新成功，更新昵称 TextView 的文本显示
+                                nickname.setText(newNickname);
+                                Toast.makeText(getContext(), "昵称更新成功", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "昵称更新失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "查询当前用户信息失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
 
 }

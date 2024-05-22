@@ -68,7 +68,7 @@
                 <LinearLayout
                     android:padding="5dp"
                     android:id="@+id/gender_layout"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="80dp"
                     android:orientation="vertical"
                     android:layout_weight="1">
@@ -97,10 +97,44 @@
 
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:padding="5dp"
+                    android:id="@+id/height_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="身高"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/height"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/weight_layout"
                     android:padding="5dp"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="80dp"
                     android:orientation="vertical"
                     android:layout_weight="1">
@@ -131,7 +165,7 @@
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/cupcapacity_layout"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:padding="5dp"
                     android:layout_height="80dp"
                     android:orientation="vertical"
@@ -139,7 +173,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="杯子容量"
+                        android:text="杯容量"
                         android:textSize="20sp"
                         android:textColor="@color/white"
                         android:layout_gravity="center"

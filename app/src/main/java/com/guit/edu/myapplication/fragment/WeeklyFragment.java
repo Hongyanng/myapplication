@@ -79,8 +79,8 @@ public class WeeklyFragment extends HistoryDataFragment {
 
     protected Date getStartOfWeek() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-//        calendar.add(Calendar.WEEK_OF_YEAR, -1);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        calendar.add(Calendar.WEEK_OF_YEAR, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -90,7 +90,7 @@ public class WeeklyFragment extends HistoryDataFragment {
     protected Date getEndOfWeek() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+//        calendar.add(Calendar.WEEK_OF_YEAR, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -266,7 +266,6 @@ public class WeeklyFragment extends HistoryDataFragment {
             return "";
         }
     }
-
 
 
 
