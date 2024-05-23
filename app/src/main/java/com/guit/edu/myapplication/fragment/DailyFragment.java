@@ -37,8 +37,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -180,25 +183,40 @@ public class DailyFragment extends HistoryDataFragment {
 
     protected void setupLineChart(List<History> histories) {
         if (histories != null && !histories.isEmpty()) {
-            // 将历史记录按日期进行分组并计算每天的饮用量总和
-            Map<String, Integer> dateToTotalDrink = new HashMap<>();
+            // 将历史记录按日期进行排序
+            Collections.sort(histories, new Comparator<History>() {
+                @Override
+                public int compare(History h1, History h2) {
+                    return h1.getCreatedAt().compareTo(h2.getCreatedAt());
+                }
+            });
+
+            // 创建日期到饮水量的映射
+            Map<String, Integer> dateToTotalDrink = new LinkedHashMap<>();
+
+            // 计算每天的饮水量总和
             for (History history : histories) {
-                String date = history.getCreatedAt().split(" ")[0]; // 提取日期部分
+                String date = history.getCreatedAt().split(" ")[0];
                 int drink = history.getDrink();
-                int currentTotalDrink = dateToTotalDrink.getOrDefault(date, 0);
-                dateToTotalDrink.put(date, currentTotalDrink + drink);
+                if (dateToTotalDrink.containsKey(date)) {
+                    int totalDrink = dateToTotalDrink.get(date);
+                    dateToTotalDrink.put(date, totalDrink + drink);
+                } else {
+                    dateToTotalDrink.put(date, drink);
+                }
             }
 
-            // 生成折线图的数据集
+            // 创建折线图的数据集
             List<Entry> entries = new ArrayList<>();
             int index = 0;
-            for (Map.Entry<String, Integer> entry : dateToTotalDrink.entrySet()) {
-                entries.add(new Entry(index, entry.getValue()));
+            for (String date : dateToTotalDrink.keySet()) {
+                int totalDrink = dateToTotalDrink.get(date);
+                entries.add(new Entry(index, totalDrink));
                 index++;
             }
 
             // 创建折线图的数据集
-            LineDataSet dataSet = new LineDataSet(entries, "今天的饮用量趋势");
+            LineDataSet dataSet = new LineDataSet(entries, "一天内的饮用量趋势");
             dataSet.setColor(Color.GREEN);
             dataSet.setCircleColor(Color.BLACK);
             dataSet.setLineWidth(2f);
@@ -212,12 +230,20 @@ public class DailyFragment extends HistoryDataFragment {
             // 配置 X 轴
             XAxis xAxis = lineChart.getXAxis();
             xAxis.setValueFormatter(new ValueFormatter() {
+                private final SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
+                private final String[] dates = dateToTotalDrink.keySet().toArray(new String[0]);
+
                 @Override
                 public String getFormattedValue(float value) {
                     int intValue = (int) value;
-                    if (intValue >= 0 && intValue < dateToTotalDrink.size()) {
-                        // 返回每天的日期
-                        return formatDate(dateToTotalDrink.keySet().toArray(new String[0])[intValue]);
+                    if (intValue >= 0 && intValue < dates.length) {
+                        try {
+                            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dates[intValue]);
+                            return sdf.format(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return dates[intValue];
+                        }
                     }
                     return "";
                 }
@@ -263,20 +289,6 @@ public class DailyFragment extends HistoryDataFragment {
         }
     }
 
-    // 辅助方法：格式化日期
-    private String formatDate(String dateString) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date date = sdf.parse(dateString);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            // 格式化为 mm 月 dd 日
-            return String.format("%d月%d日", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
 
 
 

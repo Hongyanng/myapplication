@@ -241,7 +241,7 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
             taskTextView.setText("剩余"+String.valueOf(remainingDrink)+"ml ");
         }
 
-        int remainingCups = remainingDrink / cupCapacity;
+        float remainingCups = (float) remainingDrink / (float) cupCapacity;
 
 
         if (encouragementTextView != null) {
@@ -448,7 +448,6 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         // 获取当前登录用户的用户名
         String currentUsername = (String) SPUtils.get(getContext(), "username", "");
         String drinkType = typeTextView.getText().toString(); // 获取饮品种类
-
         if (!currentUsername.isEmpty() && !currentInput.isEmpty()) {
             // 在这里执行将饮水记录插入到 Bmob 后端云的操作
             History history = new History();

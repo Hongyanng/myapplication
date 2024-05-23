@@ -34,8 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,14 +57,20 @@ public class WeeklyFragment extends HistoryDataFragment {
         }
 
 
-        // 打印开始时间
-        Log.d("WeeklyFragment", "开始时间：" + getStartOfWeek().toString());
-        // 打印结束时间
-        Log.d("WeeklyFragment", "结束时间：" + getEndOfWeek().toString());
+        // 计算开始日期和结束日期
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // 结束日期为今天
+        calendar.add(Calendar.DAY_OF_YEAR, -6); // 6天前
+        Date startDate = calendar.getTime(); // 开始日期为6天前
+
+//        // 打印开始时间
+//        Log.d("WeeklyFragment", "开始时间：" + getStartOfWeek().toString());
+//        // 打印结束时间
+//        Log.d("WeeklyFragment", "结束时间：" + getEndOfWeek().toString());
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
-        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(getStartOfWeek()));
-        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(getEndOfWeek()));
+        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(startDate));
+        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(endDate));
         query.findObjects(new FindListener<History>() {
             @Override
             public void done(List<History> histories, BmobException e) {
@@ -77,25 +85,25 @@ public class WeeklyFragment extends HistoryDataFragment {
         });
     }
 
-    protected Date getStartOfWeek() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        return calendar.getTime();
-    }
-
-    protected Date getEndOfWeek() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//        calendar.add(Calendar.WEEK_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        return calendar.getTime();
-    }
+//    protected Date getStartOfWeek() {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+//        calendar.add(Calendar.WEEK_OF_YEAR, -1);
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        return calendar.getTime();
+//    }
+//
+//    protected Date getEndOfWeek() {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+////        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+//        calendar.set(Calendar.HOUR_OF_DAY, 23);
+//        calendar.set(Calendar.MINUTE, 59);
+//        calendar.set(Calendar.SECOND, 59);
+//        return calendar.getTime();
+//    }
 
     protected void setupBarChart(List<History> histories) {
         // 处理数据并设置柱状图
@@ -169,25 +177,40 @@ public class WeeklyFragment extends HistoryDataFragment {
 
     protected void setupLineChart(List<History> histories) {
         if (histories != null && !histories.isEmpty()) {
-            // 将历史记录按日期进行分组并计算每天的饮用量总和
-            Map<String, Integer> dateToTotalDrink = new HashMap<>();
+            // 将历史记录按日期进行排序
+            Collections.sort(histories, new Comparator<History>() {
+                @Override
+                public int compare(History h1, History h2) {
+                    return h1.getCreatedAt().compareTo(h2.getCreatedAt());
+                }
+            });
+
+            // 创建日期到饮水量的映射
+            Map<String, Integer> dateToTotalDrink = new LinkedHashMap<>();
+
+            // 计算每天的饮水量总和
             for (History history : histories) {
-                String date = history.getCreatedAt().split(" ")[0]; // 提取日期部分
+                String date = history.getCreatedAt().split(" ")[0];
                 int drink = history.getDrink();
-                int currentTotalDrink = dateToTotalDrink.getOrDefault(date, 0);
-                dateToTotalDrink.put(date, currentTotalDrink + drink);
+                if (dateToTotalDrink.containsKey(date)) {
+                    int totalDrink = dateToTotalDrink.get(date);
+                    dateToTotalDrink.put(date, totalDrink + drink);
+                } else {
+                    dateToTotalDrink.put(date, drink);
+                }
             }
 
-            // 生成折线图的数据集
+            // 创建折线图的数据集
             List<Entry> entries = new ArrayList<>();
             int index = 0;
-            for (Map.Entry<String, Integer> entry : dateToTotalDrink.entrySet()) {
-                entries.add(new Entry(index, entry.getValue()));
+            for (String date : dateToTotalDrink.keySet()) {
+                int totalDrink = dateToTotalDrink.get(date);
+                entries.add(new Entry(index, totalDrink));
                 index++;
             }
 
             // 创建折线图的数据集
-            LineDataSet dataSet = new LineDataSet(entries, "一周内的饮用量趋势");
+            LineDataSet dataSet = new LineDataSet(entries, "一个星期内的饮用量趋势");
             dataSet.setColor(Color.GREEN);
             dataSet.setCircleColor(Color.BLACK);
             dataSet.setLineWidth(2f);
@@ -201,12 +224,20 @@ public class WeeklyFragment extends HistoryDataFragment {
             // 配置 X 轴
             XAxis xAxis = lineChart.getXAxis();
             xAxis.setValueFormatter(new ValueFormatter() {
+                private final SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
+                private final String[] dates = dateToTotalDrink.keySet().toArray(new String[0]);
+
                 @Override
                 public String getFormattedValue(float value) {
                     int intValue = (int) value;
-                    if (intValue >= 0 && intValue < dateToTotalDrink.size()) {
-                        // 返回每天的日期
-                        return formatDate(dateToTotalDrink.keySet().toArray(new String[0])[intValue]);
+                    if (intValue >= 0 && intValue < dates.length) {
+                        try {
+                            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dates[intValue]);
+                            return sdf.format(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return dates[intValue];
+                        }
                     }
                     return "";
                 }
@@ -252,20 +283,6 @@ public class WeeklyFragment extends HistoryDataFragment {
         }
     }
 
-    // 辅助方法：格式化日期
-    private String formatDate(String dateString) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date date = sdf.parse(dateString);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            // 格式化为 mm 月 dd 日
-            return String.format("%d月%d日", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
 
 
 
