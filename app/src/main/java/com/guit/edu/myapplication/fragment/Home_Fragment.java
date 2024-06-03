@@ -1,9 +1,11 @@
 package com.guit.edu.myapplication.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
@@ -29,7 +31,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.guit.edu.myapplication.Adapter.WaterRecordAdapter;
 import com.guit.edu.myapplication.R;
 import com.guit.edu.myapplication.SPUtils;
-import com.guit.edu.myapplication.activity.First_interface_Activity;
 import com.guit.edu.myapplication.entity.History;
 import com.guit.edu.myapplication.entity.User;
 
@@ -38,6 +39,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ando.widget.pickerview.builder.OptionsPickerBuilder;
+import ando.widget.pickerview.listener.OnOptionsSelectListener;
+import ando.widget.pickerview.view.OptionsPickerView;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
@@ -46,10 +50,8 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 public class Home_Fragment extends Fragment implements View.OnClickListener {
-    private TextView nickname;
-    private TextView taskTextView;
-    private TextView welcomeTextView;
-    private LinearLayout drinkLayout;
+    private TextView nickname,taskTextView,welcomeTextView,display,timeTextView,typeTextView,encouragementTextView;
+    private LinearLayout drinkLayout,rightLayout;
     private int drinkValue = 0;
     private int assignmentValue = 0;
     private int cupCapacity;
@@ -57,12 +59,9 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
     private WaterRecordAdapter adapter;
     private List<History> historyList;
     private String currentInput = "";
-    private TextView display;
-    private TextView timeTextView ;
-    private TextView typeTextView;
-    private TextView encouragementTextView;
-    ImageView cupImage;
-    @SuppressLint("MissingInflatedId")
+    private int reminderMinutes;
+    private Ringtone ringtone;
+    private CountDownTimer countDownTimer;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,6 +74,7 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         drinkLayout = view.findViewById(R.id.drink);
         timeTextView = view.findViewById(R.id.time);
         encouragementTextView = view.findViewById(R.id.encouragement_text);
+        rightLayout = view.findViewById(R.id.right);
 
         //初始化 RecyclerView
         recyclerView = view.findViewById(R.id.conn);
@@ -104,9 +104,14 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         }else {
             welcomeMessage = "晚安";
         }
-
         welcomeTextView.setText(welcomeMessage);
 
+        rightLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPickerView();
+            }
+        });
 
         drinkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,9 +132,7 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         queryUserData();
         queryDrinkValue();
 
-        startCountDown(); // 启动倒计时
-
-
+        timeTextView.setText("下次提醒:00:00:00");
 
         return view;
     }
@@ -252,6 +255,65 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
             }
         }
 
+    }
+
+    // 点击事件，弹出选择器
+    private void showPickerView() {
+        final List<String> optionsItems = new ArrayList<>();
+        optionsItems.add("1分钟");
+        optionsItems.add("30分钟");
+        optionsItems.add("1个小时");
+        optionsItems.add("2个小时");
+        optionsItems.add("3个小时");
+        optionsItems.add("5个小时");
+
+        OptionsPickerView<String> pvOptions = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                String selectedTime = optionsItems.get(options1);
+                int minutes = 0;
+
+                switch (selectedTime) {
+                    case "1分钟":
+                        minutes = 1;
+                        break;
+                    case "30分钟":
+                        minutes = 30;
+                        break;
+                    case "1个小时":
+                        minutes = 60;
+                        break;
+                    case "2个小时":
+                        minutes = 120;
+                        break;
+                    case "3个小时":
+                        minutes = 180;
+                        break;
+                    case "5个小时":
+                        minutes = 300;
+                        break;
+                }
+
+                reminderMinutes = minutes;
+                timeTextView.setText("下次提醒: " + selectedTime);
+
+                restartCountDown(); // 重新启动倒计时
+            }
+        })
+                .setTitleText("选择提醒时间")
+                .build();
+
+        pvOptions.setPicker(optionsItems);
+        pvOptions.show();
+    }
+
+    private void restartCountDown() {
+        // 停止当前倒计时
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        // 启动新的倒计时
+        startCountDown();
     }
 
     // 弹出拨号盘的方法
@@ -392,6 +454,50 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
         Carbonateddrinks.setOnClickListener(onClickListener);
         other.setOnClickListener(onClickListener);
 
+
+        // 设置other按钮的点击事件
+        other.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCustomDrinkTypeDialog();
+                drinkTypeDialog.dismiss(); // 关闭当前对话框
+            }
+        });
+
+    }
+
+    //自定义饮品类型
+    private void showCustomDrinkTypeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("请输入饮品名称");
+
+        // 创建一个 EditText 用于用户输入
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // 确认按钮
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String customDrinkType = input.getText().toString();
+                if (!customDrinkType.isEmpty()) {
+                    updateDrinkType(customDrinkType); // 更新饮品类型显示
+                } else {
+                    Toast.makeText(getContext(), "饮品名称不能为空", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // 取消按钮
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
 
@@ -400,7 +506,7 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
     }
 
 
-
+    //获取输入的数字
     @Override
     public void onClick(View v) {
         Button button = (Button) v;
@@ -476,27 +582,63 @@ public class Home_Fragment extends Fragment implements View.OnClickListener {
     }
 
 
+    // 弹出提醒对话框并播放铃声
+    private void showAlertAndRingAlarm() {
+        // 弹出对话框提示用户该喝水了
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("该喝水了！");
+        builder.setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 用户点击按钮后停止铃声
+                stopAlarm();
+                // 重新启动倒计时
+                startCountDown();
+            }
+        });
+        builder.setCancelable(false); // 设置对话框不可取消
+        builder.show();
+
+        // 播放系统铃声
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        ringtone = RingtoneManager.getRingtone(getContext(), notification);
+        if (ringtone != null) {
+            ringtone.play();
+        }
+    }
+
+    // 停止铃声
+    private void stopAlarm() {
+        // 停止播放铃声
+        if (ringtone != null && ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+    }
+
+    // 启动倒计时
     private void startCountDown() {
-        Calendar calendar = Calendar.getInstance();
-        long currentTimeMillis = calendar.getTimeInMillis();
-        long timeToNextHour = 3600000 - (currentTimeMillis % 3600000);
+        if (reminderMinutes <= 0) {
+            Toast.makeText(getContext(), "请先设置提醒时间间隔", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        long reminderMillis = reminderMinutes * 60 * 1000; // 将分钟转换为毫秒
+        countDownTimer = new CountDownTimer(reminderMillis, 1000) {
 
-        new CountDownTimer(timeToNextHour, 1000) {
+            @Override
             public void onTick(long millisUntilFinished) {
-                long seconds = (millisUntilFinished / 1000) % 60;
-                long minutes = (millisUntilFinished / (1000 * 60)) % 60;
-                long hours = (millisUntilFinished / (1000 * 60 * 60)) % 24;
-
-                // 格式化显示时间
-                String timeFormat = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                timeTextView.setText("下次提醒:"+timeFormat);
+                long hoursRemaining = (millisUntilFinished / (1000 * 60 * 60)) % 24;
+                long minutesRemaining = (millisUntilFinished / (1000 * 60)) % 60;
+                long secondsRemaining = (millisUntilFinished / 1000) % 60;
+                String timeRemaining = String.format("%02d:%02d:%02d", hoursRemaining, minutesRemaining, secondsRemaining);
+                timeTextView.setText("下次提醒: " + timeRemaining);
             }
 
+            @Override
             public void onFinish() {
-                // 当倒计时结束时，重置倒计时
-                startCountDown(); // 递归调用以重新启动计时器
+                showAlertAndRingAlarm();
             }
-        }.start();
+        };
+        countDownTimer.start();
     }
 
     // 弹出对话框或者输入框让用户输入新的昵称

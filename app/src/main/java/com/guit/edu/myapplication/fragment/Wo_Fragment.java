@@ -2,14 +2,17 @@ package com.guit.edu.myapplication.fragment;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.guit.edu.myapplication.activity.About_Activity;
 import com.guit.edu.myapplication.activity.FindPassword_Activity;
 import com.guit.edu.myapplication.activity.Main_Activity;
 import com.guit.edu.myapplication.R;
@@ -34,6 +38,8 @@ import com.guit.edu.myapplication.entity.History;
 import com.guit.edu.myapplication.entity.User;
 import com.makeramen.roundedimageview.RoundedImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,29 +56,14 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
 
-public class Wo_Fragment extends Fragment {
-    private TextView nickname;
-    private TextView signature;
-    private TextView gender;
-    private TextView weight;
-    private TextView cupcapacity;
-    private TextView assignment;
-    private LinearLayout genderLayout;
-    private LinearLayout weightLayout;
-    private LinearLayout heightLayout;
-    private LinearLayout cupCapacityLayout;
+public class Wo_Fragment extends Fragment implements View.OnClickListener{
+    private TextView nickname,signature,gender,height,weight,cupcapacity,assignment,versionTextView,achievementTextView;
+    private LinearLayout genderLayout,weightLayout,heightLayout,cupCapacityLayout;
     private RoundedImageView touxiangImageView;
-    private RelativeLayout exit_layout;
-    private RelativeLayout assignment_layout;
-    private TextView versionTextView;
-    private RelativeLayout lose_layout;
-    private RelativeLayout water_info_layout;
-    private TextView achievementTextView;
-    private TextView height;
+    private RelativeLayout exit_layout,assignment_layout,lose_layout,water_info_layout,about_layout;
     private List<String> genderItems = new ArrayList<>();
     private List<String> heightItems = new ArrayList<>();
-    private static final int REQUEST_CAMERA = 1;
-    private static final int SELECT_FILE = 2;
+    private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
 
     @Nullable
@@ -99,6 +90,7 @@ public class Wo_Fragment extends Fragment {
         achievementTextView = view.findViewById(R.id.achievement);
         heightLayout = view.findViewById(R.id.height_layout);
         height = view.findViewById(R.id.height);
+        about_layout = view.findViewById(R.id.about_layout);
 
         // 初始化性别列表
         genderItems.add("男");
@@ -106,6 +98,7 @@ public class Wo_Fragment extends Fragment {
 
         // 刷新数据
         queryUserData();
+        //查询连续打卡次数
         updateContinuousDays();
 
         // 获取版本号
@@ -114,100 +107,116 @@ public class Wo_Fragment extends Fragment {
             versionTextView.setText(versionName);
         }
 
-        // 初始化身高选项
+        //启动点击事件监听
+        lose_layout.setOnClickListener(this);
+        nickname.setOnClickListener(this);
+        signature.setOnClickListener(this);
+        genderLayout.setOnClickListener(this);
+        heightLayout.setOnClickListener(this);
+        weightLayout.setOnClickListener(this);
+        cupCapacityLayout.setOnClickListener(this);
+        touxiangImageView.setOnClickListener(this);
+        water_info_layout.setOnClickListener(this);
+        about_layout.setOnClickListener(this);
+        assignment_layout.setOnClickListener(this);
+        exit_layout.setOnClickListener(this);
 
-
-        // 修改密码的点击事件
-        lose_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                findPassword();
-            }
-        });
-
-        // 修改用户昵称的点击事件监听
-        nickname.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showInputDialog();
-            }
-        });
-
-        // 修改个性签名的点击事件监听
-        signature.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showSignatureDialog();
-            }
-        });
-
-        // 修改用户性别的点击事件监听
-        genderLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showGenderPicker();
-            }
-        });
-
-        heightLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showHeightPicker();
-            }
-        });
-
-        // 修改用户体重的点击事件监听
-        weightLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showWeightPicker();
-            }
-        });
-
-        // 修改杯子容量的点击事件监听
-        cupCapacityLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCupCapacityPicker();
-            }
-        });
-
-        // 修改用户头像的点击事件监听
-        touxiangImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                showImagePickerDialog();
-            }
-        });
-
-        // 查看含水量表的点击事件监听
-        water_info_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showWaterInfo();
-            }
-        });
-
-        // 修改每日目标的点击事件
-        assignment_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAssignmentPicker();
-            }
-        });
-
-        // 退出登录的点击事件
-        exit_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ExitUser();
-            }
-        });
 
         return view;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.lose_layout:
+                findPassword();
+                break;
+            case R.id.nickname:
+                showInputDialog();
+                break;
+            case R.id.signature:
+                showSignatureDialog();
+                break;
+            case R.id.gender_layout:
+                showGenderPicker();
+                break;
+            case R.id.height_layout:
+                showHeightPicker();
+                break;
+            case R.id.weight_layout:
+                showWeightPicker();
+                break;
+            case R.id.cupcapacity_layout:
+                showCupCapacityPicker();
+                break;
+            case R.id.touxiang:
+                openGallery();
+                break;
+            case R.id.water_info_layout:
+                showWaterInfo();
+                break;
+            case R.id.about_layout:
+                showAboutActivity();
+                break;
+            case R.id.assignment_layout:
+                showAssignmentPicker();
+                break;
+            case R.id.exit_layout:
+                ExitUser();
+                break;
+        }
+    }
 
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                touxiangImageView.setImageBitmap(bitmap);
+                uploadImage(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private void showAboutActivity(){
+        Intent intent = new Intent(getContext(), About_Activity.class);
+        startActivity(intent);
+    }
+
+    private void uploadImage(Bitmap bitmap) {
+        String currentUsername = SPUtils.get(getContext(), "username", "").toString();
+        if (currentUsername.isEmpty()) {
+            Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] imageData = baos.toByteArray();
+        final User currentUser = new User();
+        currentUser.setTouxiang(imageData); // 设置用户头像为字节数组
+
+        // 更新用户头像到 Bmob 数据库
+        currentUser.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    Toast.makeText(getContext(), "头像上传成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "头像上传失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
     private void updateContinuousDays() {
         String currentUsername = SPUtils.get(getContext(), "username", "").toString();
@@ -270,7 +279,8 @@ public class Wo_Fragment extends Fragment {
                 Date expectedDate = cal.getTime();
                 // 检查当前日期是否是上一个日期的前一天
                 if (!isSameDay(expectedDate, currentDate)) {
-                    break;  // 如果不是连续的，结束循环
+                    // 如果不是连续的，继续检查下一个日期
+                    continue;
                 }
             }
 
@@ -288,13 +298,13 @@ public class Wo_Fragment extends Fragment {
 
     private boolean isSameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
         Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
         cal2.setTime(date2);
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
-                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
+
 
 
 
@@ -713,12 +723,10 @@ public class Wo_Fragment extends Fragment {
                     currentUser.setWeight(newWeight);
                     int recommendedWaterIntake = newWeight * 35;
                     currentUser.setAssignment(recommendedWaterIntake);
-                    // 保存更新后的用户信息到数据库
                     currentUser.update(new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
-                                // 更新成功，更新体重 TextView 的文本显示
                                 weight.setText(newWeight + "kg");
                                 queryUserData();
                                 Toast.makeText(getContext(), "体重更新成功", Toast.LENGTH_SHORT).show();

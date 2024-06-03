@@ -54,16 +54,15 @@ public class YearlyFragment extends HistoryDataFragment {
             Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
             return;
         }
-
-
-        // 打印开始时间
-        Log.d("YearlyFragment", "开始时间：" + getStartOfYear().toString());
-        // 打印结束时间
-        Log.d("YearlyFragment", "结束时间：" + getEndOfYear().toString());
+        // 计算开始日期和结束日期
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // 结束日期为今天
+        calendar.add(Calendar.DAY_OF_YEAR, -365); // 365天前
+        Date startDate = calendar.getTime(); // 开始日期为365天前
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
-        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(getStartOfYear()));
-        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(getEndOfYear()));
+        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(startDate));
+        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(endDate));
         query.findObjects(new FindListener<History>() {
             @Override
             public void done(List<History> histories, BmobException e) {
@@ -76,29 +75,6 @@ public class YearlyFragment extends HistoryDataFragment {
                 }
             }
         });
-    }
-
-
-    protected Date getStartOfYear() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Calendar.JANUARY);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    protected Date getEndOfYear() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-        calendar.set(Calendar.DAY_OF_MONTH, 31);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        return calendar.getTime();
     }
 
     protected void setupBarChart(List<History> histories) {
@@ -178,10 +154,8 @@ public class YearlyFragment extends HistoryDataFragment {
                     return h1.getCreatedAt().compareTo(h2.getCreatedAt());
                 }
             });
-
             // 创建日期到饮水量的映射
             Map<String, Integer> dateToTotalDrink = new LinkedHashMap<>();
-
             // 计算每天的饮水量总和
             for (History history : histories) {
                 String date = history.getCreatedAt().split(" ")[0];
@@ -193,7 +167,6 @@ public class YearlyFragment extends HistoryDataFragment {
                     dateToTotalDrink.put(date, drink);
                 }
             }
-
             // 创建折线图的数据集
             List<Entry> entries = new ArrayList<>();
             int index = 0;
@@ -202,25 +175,21 @@ public class YearlyFragment extends HistoryDataFragment {
                 entries.add(new Entry(index, totalDrink));
                 index++;
             }
-
             // 创建折线图的数据集
             LineDataSet dataSet = new LineDataSet(entries, "一年内的饮用量趋势");
             dataSet.setColor(Color.GREEN);
             dataSet.setCircleColor(Color.BLACK);
             dataSet.setLineWidth(2f);
             dataSet.setCircleRadius(4f);
-
             // 设置折线图的其他属性
             LineData lineData = new LineData(dataSet);
             lineChart.setData(lineData);
             lineChart.getDescription().setEnabled(false);
-
             // 配置 X 轴
             XAxis xAxis = lineChart.getXAxis();
             xAxis.setValueFormatter(new ValueFormatter() {
                 private final SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日");
                 private final String[] dates = dateToTotalDrink.keySet().toArray(new String[0]);
-
                 @Override
                 public String getFormattedValue(float value) {
                     int intValue = (int) value;
@@ -240,7 +209,6 @@ public class YearlyFragment extends HistoryDataFragment {
             xAxis.setDrawGridLines(false);
             xAxis.setGranularity(1f);
             xAxis.setGranularityEnabled(true);
-
             // 配置 Y 轴
             YAxis yAxis = lineChart.getAxisLeft();
             yAxis.setValueFormatter(new ValueFormatter() {
@@ -249,13 +217,10 @@ public class YearlyFragment extends HistoryDataFragment {
                     return String.valueOf((int) value);
                 }
             });
-
             // 获取右边的 Y 轴对象并隐藏
             YAxis rightYAxis = lineChart.getAxisRight();
             rightYAxis.setEnabled(false);
-
             lineChart.animateX(2500);
-
             // 获取图例对象
             Legend legend = lineChart.getLegend();
             // 设置图例的位置为右上角
@@ -269,7 +234,6 @@ public class YearlyFragment extends HistoryDataFragment {
             // 设置图例的样式和间距等
             legend.setXEntrySpace(5f); // 设置图例项之间的X轴间距
             legend.setYEntrySpace(5f); // 设置图例项之间的Y轴间距
-
             // 刷新图表
             lineChart.invalidate();
         } else {

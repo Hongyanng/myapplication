@@ -53,8 +53,7 @@ import cn.bmob.v3.listener.FindListener;
 public class DailyFragment extends HistoryDataFragment {
     RelativeLayout linechart_layout;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         linechart_layout = view.findViewById(R.id.linechart_layout);
         linechart_layout.setVisibility(View.GONE);
@@ -68,12 +67,6 @@ public class DailyFragment extends HistoryDataFragment {
             Toast.makeText(getContext(), "未登录或获取用户信息失败", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // 打印开始时间
-        Log.d("DailyFragment", "开始时间：" + getStartOfDay().toString());
-        // 打印结束时间
-        Log.d("DailyFragment", "结束时间：" + getEndOfDay().toString());
-
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
         query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(getStartOfDay()));
@@ -343,7 +336,5 @@ public class DailyFragment extends HistoryDataFragment {
             Toast.makeText(getContext(), "暂无数据", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 }

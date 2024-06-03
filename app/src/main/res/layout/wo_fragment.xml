@@ -293,6 +293,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/about_layout"
                 android:layout_margin="10dp"
                 android:background="@drawable/wo_bg"
                 android:layout_width="match_parent"

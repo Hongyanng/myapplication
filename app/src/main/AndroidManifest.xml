@@ -14,10 +14,16 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--获取相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!--获取闹钟权限 -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <!--推送所需的权限-->
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 
     <application
@@ -51,6 +57,7 @@
         <activity android:name=".activity.First_interface_Activity"></activity>
         <activity android:name=".activity.Resgister_Activity"></activity>
         <activity android:name=".activity.Water_Info_Activity"></activity>
+        <activity android:name=".activity.About_Activity"></activity>
 
 
 <!--        <service-->

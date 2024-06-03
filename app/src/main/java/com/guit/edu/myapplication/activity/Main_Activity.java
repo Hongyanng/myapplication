@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.DisplayCutout;
 import android.view.View;
+import android.view.WindowInsets;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -40,6 +43,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_main);
         initView();
         loadSavedCredentials();//加载保存的密码
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            handleDisplayCutout();
+        }
     }
 
     //初始化控件
@@ -159,5 +166,25 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             SPUtils.remove(context, "saved_phone");
             SPUtils.remove(context, "saved_password");
         }
+    }
+
+    private void handleDisplayCutout() {
+        final View rootLayout = findViewById(R.id.root_layout);
+        rootLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    DisplayCutout displayCutout = insets.getDisplayCutout();
+                    if (displayCutout != null) {
+                        int topPadding = displayCutout.getSafeInsetTop();
+                        int bottomPadding = displayCutout.getSafeInsetBottom();
+                        int leftPadding = displayCutout.getSafeInsetLeft();
+                        int rightPadding = displayCutout.getSafeInsetRight();
+                        rootLayout.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
+                    }
+                }
+                return insets;
+            }
+        });
     }
 }

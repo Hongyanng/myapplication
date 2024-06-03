@@ -55,15 +55,16 @@ public class MonthlyFragment extends HistoryDataFragment {
             return;
         }
 
+        // 计算开始日期和结束日期
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // 结束日期为今天
+        calendar.add(Calendar.DAY_OF_YEAR, -30); // 30天前
+        Date startDate = calendar.getTime(); // 开始日期为30天前
 
-        // 打印开始时间
-        Log.d("MonthlyFragment", "开始时间：" + getStartOfMonth().toString());
-        // 打印结束时间
-        Log.d("MonthlyFragment", "结束时间：" + getEndOfMonth().toString());
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
-        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(getStartOfMonth()));
-        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(getEndOfMonth()));
+        query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(startDate));
+        query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(endDate));
         query.findObjects(new FindListener<History>() {
             @Override
             public void done(List<History> histories, BmobException e) {
@@ -76,27 +77,6 @@ public class MonthlyFragment extends HistoryDataFragment {
                 }
             }
         });
-    }
-
-
-    protected Date getStartOfMonth() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    protected Date getEndOfMonth() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        return calendar.getTime();
     }
 
     protected void setupBarChart(List<History> histories) {

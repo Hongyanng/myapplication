@@ -56,17 +56,11 @@ public class WeeklyFragment extends HistoryDataFragment {
             return;
         }
 
-
         // 计算开始日期和结束日期
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // 结束日期为今天
         calendar.add(Calendar.DAY_OF_YEAR, -6); // 6天前
         Date startDate = calendar.getTime(); // 开始日期为6天前
-
-//        // 打印开始时间
-//        Log.d("WeeklyFragment", "开始时间：" + getStartOfWeek().toString());
-//        // 打印结束时间
-//        Log.d("WeeklyFragment", "结束时间：" + getEndOfWeek().toString());
         BmobQuery<History> query = new BmobQuery<>();
         query.addWhereEqualTo("Username", currentUsername);
         query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(startDate));
@@ -84,26 +78,6 @@ public class WeeklyFragment extends HistoryDataFragment {
             }
         });
     }
-
-//    protected Date getStartOfWeek() {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//        calendar.add(Calendar.WEEK_OF_YEAR, -1);
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 0);
-//        calendar.set(Calendar.SECOND, 0);
-//        return calendar.getTime();
-//    }
-//
-//    protected Date getEndOfWeek() {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-////        calendar.add(Calendar.WEEK_OF_YEAR, 1);
-//        calendar.set(Calendar.HOUR_OF_DAY, 23);
-//        calendar.set(Calendar.MINUTE, 59);
-//        calendar.set(Calendar.SECOND, 59);
-//        return calendar.getTime();
-//    }
 
     protected void setupBarChart(List<History> histories) {
         // 处理数据并设置柱状图

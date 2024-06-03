@@ -1,5 +1,7 @@
 package com.guit.edu.myapplication.entity;
 
+import android.graphics.Bitmap;
+
 import cn.bmob.v3.BmobObject;
 
 public class User extends BmobObject {
@@ -13,8 +15,6 @@ public class User extends BmobObject {
     int Weight;  //体重
     int Cupcapacity;  //杯子容量
 
-
-
     public int calculateAssignment() {
         // 计算饮水目标量，单位为毫升
         // 假设公式：每日饮水量（毫升） = 体重（公斤） * 35
@@ -24,6 +24,17 @@ public class User extends BmobObject {
     public void setCalculatedAssignment() {
         this.Assignment = calculateAssignment();
     }
+
+    private byte[] touxiang; // 用户头像的字节数组
+
+    public byte[] getTouxiang() {
+        return touxiang;
+    }
+
+    public void setTouxiang(byte[] touxiang) {
+        this.touxiang = touxiang;
+    }
+
 
     public String getNickname() {
         return Nickname;
